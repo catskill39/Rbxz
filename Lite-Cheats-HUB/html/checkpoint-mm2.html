@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Чекпоинты | Murder Mystery 2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gradient-blue: linear-gradient(135deg, #4facfe, #00f2fe, #007bff);
+            --gradient-blue-reverse: linear-gradient(135deg, #007bff, #00f2fe, #4facfe);
+            --bg-dark: #0a0a0a;
+            --text-light: #f0f0f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+        }
+
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 90%;
+            background: rgba(15, 15, 15, 0.7);
+            border: 2px solid transparent;
+            border-image: var(--gradient-blue);
+            border-image-slice: 1;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: animated;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--gradient-blue);
+            z-index: -1;
+            border-radius: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .container:hover::before {
+            opacity: 0.3;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-family: 'Orbitron', sans-serif;
+            background: var(--gradient-blue);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: textGlow 2s infinite alternate;
+        }
+
+        .checkpoint-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .checkpoint {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .checkpoint span {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            padding: 0.5rem 1rem;
+            border: 1px solid transparent;
+            border-image: var(--gradient-blue);
+            border-image-slice: 1;
+            border-radius: 4px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            text-decoration: none;
+            font-weight: 600;
+            border: 2px solid transparent;
+            border-image: var(--gradient-blue);
+            border-image-slice: 1;
+            color: var(--text-light);
+            background: rgba(30, 30, 30, 0.7);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Rajdhani', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: rgba(50, 50, 50, 0.9);
+            color: #00f2fe;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-blue-reverse);
+            opacity: 0.2;
+            transition: all 0.6s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        @keyframes textGlow {
+            from { text-shadow: 0 0 5px rgba(0, 123, 255, 0.3); }
+            to { text-shadow: 0 0 15px rgba(0, 123, 255, 0.7), 0 0 25px rgba(0, 123, 255, 0.4); }
+        }
+
+        .rainbow-text {
+            background: var(--gradient-blue);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: rainbow 3s linear infinite;
+        }
+
+        @keyframes rainbow {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.5rem; }
+            .container { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+
+    <div class="container">
+        <h1 class="rainbow-text">Чекпоинты для Murder Mystery 2</h1>
+        <div class="checkpoint-container">
+            <div class="checkpoint">
+                <span>0/1</span>
+            </div>
+        </div>
+        <a href="https://work.ink/mm2" class="btn" id="continueBtn">Continue</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // Функция для генерации случайного HEX-цвета
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        // Функция для установки случайного градиента
+        function setRandomGradient() {
+            const color1 = getRandomColor();
+            const color2 = getRandomColor();
+            const color3 = getRandomColor();
+            const gradient = `linear-gradient(135deg, ${color1}, ${color2}, ${color3})`;
+            const gradientReverse = `linear-gradient(135deg, ${color3}, ${color2}, ${color1})`;
+            document.documentElement.style.setProperty('--gradient-blue', gradient);
+            document.documentElement.style.setProperty('--gradient-blue-reverse', gradientReverse);
+            
+            // Обновление цвета частиц
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                    "color": { "value": color2 },
+                    "shape": { "type": "circle", "stroke": { "width": 0, "color": "#000000" }, "polygon": { "nb_sides": 5 } },
+                    "opacity": { "value": 0.5, "random": true, "anim": { "enable": true, "speed": 1, "opacity_min": 0.1, "sync": false } },
+                    "size": { "value": 3, "random": true, "anim": { "enable": true, "speed": 2, "size_min": 0.1, "sync": false } },
+                    "line_linked": { "enable": true, "distance": 150, "color": color2, "opacity": 0.2, "width": 1 },
+                    "move": { "enable": true, "speed": 1, "direction": "none", "random": true, "straight": false, "out_mode": "out", "bounce": false, "attract": { "enable": true, "rotateX": 600, "rotateY": 1200 } }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
+                    "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 0.5 } }, "bubble": { "distance": 400, "size": 40, "duration": 2, "opacity": 8, "speed": 3 }, "repulse": { "distance": 200, "duration": 0.4 }, "push": { "particles_nb": 4 }, "remove": { "particles_nb": 2 } }
+                },
+                "retina_detect": true
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setRandomGradient();
+
+            const continueBtn = document.getElementById('continueBtn');
+
+            continueBtn.addEventListener('click', function(event) {
+                event.preventDefault();
+                window.open(this.href, '_blank');
+            });
+
+            const elements = document.querySelectorAll('.btn, .container, .checkpoint span');
+            function animateGradient() {
+                elements.forEach(el => {
+                    const randomAngle = Math.floor(Math.random() * 360);
+                    const gradient = `linear-gradient(${randomAngle}deg, ${getRandomColor()}, ${getRandomColor()}, ${getRandomColor()})`;
+                    if (el.classList.contains('btn') || el.classList.contains('container') || el.tagName === 'SPAN') {
+                        el.style.borderImage = gradient;
+                        el.style.borderImageSlice = '1';
+                    }
+                });
+                setTimeout(animateGradient, 3000);
+            }
+            animateGradient();
+        });
+    </script>
+</body>
+</html>
